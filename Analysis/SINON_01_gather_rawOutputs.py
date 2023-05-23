@@ -6,17 +6,20 @@ Created on Mon Jan 30 13:31:37 2023
 import os  # Commands to remember: os.getcwd(), os.listdir() 
 import pandas as pd
 import glob
+import re
 import sys as sys
 
-# paths
-if sys.platform=='linux':  basedir  = '/home/d.uzh.ch/gfraga/smbmount/'
-else:  basedir ='V:/'
-
-dirinput =  basedir + 'spinco_data/SINON/outputs/data_exp_116083-v1/'
-diroutput = basedir + '/spinco_data/SINON/outputs/data_exp_116083-v1/preprocessed'
-
+# %%
+# paths - Use current script path as reference 
+thisScriptDir = os.path.dirname(os.path.abspath(__file__))
+# define data dir
+scripts_index = thisScriptDir.find('scripts')
+dirinput = os.path.join(thisScriptDir[:scripts_index] + 'Data', 'raw','pilot_2','data_exp_116083-v2')
+diroutput = os.path.join(thisScriptDir[:scripts_index] + 'Data', 'preprocessed','pilot_2','data_exp_116083-v2')
+# %% 
+ 
 # % find relevant files
-files = glob.glob(dirinput + "data_exp*task*.csv", recursive=True)
+files = [files for files in glob.glob(dirinput + '/**/*.csv' ,recursive=True) if re.search('task', files)]
 
 # Decode identifiers of each task
 filetags = { 'PM': ['krnm','ay71'], 
@@ -36,15 +39,21 @@ for taskname in filetags.keys():
     concatenated_df = pd.concat(dfs, axis=0)
     
     # write to file 
-    concatenated_df.to_csv('Concat_' + taskname + '.csv')
+    concatenated_df.to_csv('Concat_' + taskname + '.csv',index=False)
 
     #Split subjecs of each concatenated table (one table per task)
     concatenated_df['Participant Private ID'] = concatenated_df['Participant Private ID'].astype(str).str.replace('.0','')
     
     
-    grouped =  concatenated_df.groupby('Participant Private ID')
-        
+    grouped =  concatenated_df.groupby('Participant Private ID')        
     for name, group in grouped:
-        os.mkdir(taskname + '_' + name)            
-        group.to_csv(f'{taskname}_{name}/{taskname}_{name}.csv', index=False)
+        #make outputdirs
+        if not os.path.exists(taskname):
+            os.mkdir(taskname)            
+        if not os.path.exists(os.path.join(taskname,name)):
+            os.mkdir(os.path.join(taskname,name))         
+        
+        # save file 
+        outputfile = os.path.join(taskname, name, taskname + '_' + name + '.csv')
+        group.to_csv(outputfile, index=False)
         
