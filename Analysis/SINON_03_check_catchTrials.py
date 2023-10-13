@@ -17,18 +17,18 @@ import re
 import numpy as np
 import matplotlib.pyplot as plt        
 
-# %% 
-# paths
-if sys.platform=='linux':  basedir  = '/home/d.uzh.ch/gfraga/smbmount/'
-else:  basedir ='V:/'
+# %%  Paths 
+thisDir = os.path.dirname(os.path.abspath(__file__))
+dirinput = os.path.join(thisDir[:thisDir.find('scripts')] + 'Data', 'preprocessed','pilot_2','data_exp_116083-v2')
+
 # Add custom functions 
-sys.path.append(basedir + 'gfraga/scripts_neulin/Projects/SINON/')
+sys.path.append(thisDir)
 from functions import multiplot_lines,multiplot_lines_scatter,multiplot_rainclouds,gorilla_out_preproc,gorilla_out_summary
-dirinput =  basedir + 'spinco_data/SINON/outputs/data_exp_116083-v1/preprocessed'
+
 
 # %% find relevant files (Files have a number id before the extension. This is used in the reg exp matching)
 validfiles= [files for files in glob.glob(dirinput + '/**/*.csv' ,recursive=True) if 
-             'gathered/Concat' not in files and re.search(r'\d+\.csv', files)] # subject files here have a digit before extension 
+             'Concat' not in files and re.search(r'\d+\.csv', files)] # subject files here have a digit before extension 
  
 
 # %%  Summary per subject

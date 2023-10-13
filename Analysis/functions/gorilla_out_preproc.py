@@ -35,9 +35,11 @@ def gorilla_out_preproc(dat):
       
     
     #% PER SUBJECT: code the presented audio based on list info 
-    # First rename column with the list name (exact column varies with task, i.e., across csv file )
+    # First rename column with the list name (the exact column varies depending on  task, i.e., across csv files )
     cols2search = [i for i,val in enumerate(df.columns.str.contains('counterbalance*')) if val] 
-    colWithList = [cols2search[i] for i, val in enumerate(df.iloc[1,cols2search].str.contains('list*')) if val==True] #The actual column with the list
+    
+    # %% 
+    colWithList = [cols2search[i] for i,val in enumerate(cols2search) if any(df.iloc[:,val].astype(str).str.contains('list*'))]      
     df.insert(2,"STIMLIST",df.iloc[:,colWithList]) #Add conveniently named column with list info    
     
     # % create a variable 'audio' with the sound that was presented 

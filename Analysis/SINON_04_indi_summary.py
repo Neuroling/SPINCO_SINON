@@ -18,15 +18,22 @@ import re
 #io.renderers.default='browser'
 # %% 
 # paths
-if sys.platform=='linux':  basedir  = '/home/d.uzh.ch/gfraga/smbmount/'
-else:  basedir ='V:/'
-# Add custom functions 
-sys.path.append(basedir + 'gfraga/scripts_neulin/Projects/SINON/')
+
+# paths - Use current script path as reference 
+thisScriptDir = os.path.dirname(os.path.abspath(__file__))
+baseDir = thisScriptDir[:thisScriptDir.find('scripts')]
+
+dirinput = os.path.join(baseDir + 'Data', 'preprocessed','pilot_2','data_exp_116083-v2')
+diroutput = os.path.join(baseDir + 'Data', 'preprocessed','pilot_2','data_exp_116083-v2')
+
+# add custom functions 
+sys.path.append(thisScriptDir + 'functions')
 from functions import multiplot_lines,multiplot_lines_scatter,multiplot_rainclouds,gorilla_out_preproc,gorilla_out_summary
-dirinput =  basedir + 'spinco_data/SINON/outputs/data_exp_116083-v1/preprocessed'
+
+
 
 # %% find relevant files (Files have a number id before the extension. This is used in the reg exp matching)
-validfiles= [files for files in glob.glob(dirinput + '/**/*.csv' ,recursive=True) if 
+validfiles= [files for files in glob.glob(dirinput + '/2FC/**/*.csv' ,recursive=True) if 
              'gathered/Concat' not in files and re.search(r'\d+\.csv', files)] # subject files here have a digit before extension 
  
 
@@ -53,7 +60,7 @@ for fileinput in validfiles:
     # Tables 
     df_summary.to_csv(fileinput.replace('.csv','_stats.csv'), index = False)    
     
-    print('---<< done preprocessing and summary ' +  fileinput +'. \n' )
+    print('---<< done summary ' +  fileinput +'. \n' )
     #del dat, df, accu, rt
 
     # %%  PLOTs

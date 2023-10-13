@@ -6,6 +6,6 @@ There were three tasks: lexical decision (LD), picture matching (PM), 2 alternat
 
 # Issues
 
- 
+- First preprocessing scripts need refinment (e.g., relativ paths) 
 - *Gen_stimuli/Gen_sequences* requires revision and explicit documentation on order in which scripts were run. Make clear which ones are drafts
 

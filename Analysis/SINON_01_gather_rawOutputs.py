@@ -1,4 +1,12 @@
-"""
+""" GATHER RAW OUTPUTS 
+====================================
+- Read raw downloads from Gorilla
+- Rename Gorilla-provided strings to informative task label
+- Create folder struct per task/subjectID , save table per task & subj
+- Save also a table per task with concatenated subjects 
+- Save csvs at each subjects folder
+
+
 Created on Mon Jan 30 13:31:37 2023
 @author: gfraga
 
@@ -25,6 +33,8 @@ files = [files for files in glob.glob(dirinput + '/**/*.csv' ,recursive=True) if
 filetags = { 'PM': ['krnm','ay71'], 
               '2FC':['uiag'],
               'LD': ['q399','7qgr']}
+
+
 
 #%  for each task: find files, merge and add task tag to filename with merged tables
 # ---------------------------------------

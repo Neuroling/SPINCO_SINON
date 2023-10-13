@@ -13,15 +13,14 @@ import seaborn as sns
 import matplotlib.pyplot as plt        
 
 # %% 
-# paths
-if sys.platform=='linux':  basedir  = '/home/d.uzh.ch/gfraga/smbmount/'
-else:  basedir ='V:/'
+doplots = 0
 
-# Add custom functions 
-sys.path.append(basedir + 'gfraga/scripts_neulin/Projects/SINON/')
-from functions import multiplot_lines,multiplot_lines_scatter,multiplot_rainclouds,gorilla_out_preproc,gorilla_out_summary
+# paths - Use current script path as reference 
+thisScriptDir = os.path.dirname(os.path.abspath(__file__))
+baseDir = thisScriptDir[:thisScriptDir.find('scripts')]
 
-dirinput =  basedir + 'spinco_data/SINON/outputs/data_exp_116083-v1/preprocessed'
+dirinput = os.path.join(baseDir , 'Data', 'preprocessed','pilot_2','data_exp_116083-v2')
+diroutput = os.path.join(baseDir , 'Analysis' , 'pilot_2')
 
 # %% Find files with stats 
 
@@ -36,41 +35,45 @@ concat_df = pd.concat(dfs, axis=0)
 concat_df.Accuracy = concat_df.Accuracy.replace('1.0','1').replace('0.0','0').replace(0.0,'0').replace(1.0,'1')
 
 
+# %%  Save table
+concat_df.to_csv(os.path.join(diroutput, 'Gathered_means.csv'), index = False)    
+
  # %% 
-os.chdir(dirinput)
-for currTask in concat_df.task.unique():
-    concat_df = concat_df[concat_df['Accuracy']=='1']
-    #%
-    plt.close('all')
-    d2plot = concat_df[concat_df['task']== currTask]
-    
-    g = sns.FacetGrid(d2plot, col="TYPE",  row="SubjectID")
-    g.map(sns.lineplot, 'LV','propTrials','block',palette='Set2')
-    g.map_dataframe(sns.lineplot, x ='LV',y=0.5, color='gray',linestyle='dotted')
-    g.map_dataframe(sns.scatterplot, x='LV', y='propTrials', marker='o', hue='block',palette='Set2')
-    g.map(sns.lineplot, 'LV','propTrials',color='black', ci = None)
-    #g.map_dataframe(sns.scatterplot, x='LV', y='propTrials', marker='o', color='black')
-    g.add_legend()
-    g.fig.suptitle(currTask, fontsize=20, y=1.0, x= 0.08)
-
-    # save     
-    g.savefig('FIG_' + currTask + '_stats_Acc.jpg')
-# %% 
-os.chdir(dirinput)
-for currTask in concat_df.task.unique():
-    concat_df = concat_df[concat_df['Accuracy']=='1']
-    #%
-    plt.close('all')
-    d2plot = concat_df[concat_df['task']== currTask]
-    
-    g = sns.FacetGrid(d2plot, col="TYPE",  row="SubjectID")
-    g.map(sns.lineplot, 'LV','RT_mean','block',palette='Set2')
-    g.map_dataframe(sns.lineplot, x ='LV',y=0.5, color='gray',linestyle='dotted')
-    g.map_dataframe(sns.scatterplot, x='LV', y='RT_mean', marker='o', hue='block',palette='Set2')
-    g.map(sns.lineplot, 'LV','RT_mean',color='black', ci = None)
-    g.add_legend()
-    g.fig.suptitle(currTask, fontsize=20, y=1.0, x= 0.08)
-
-    # save     
-    g.savefig('FIG_' + currTask + '_stats_RT.jpg')
+if doplots==1:
+   os.chdir(dirinput)
+   for currTask in concat_df.task.unique():
+       concat_df = concat_df[concat_df['Accuracy']=='1']
+       #%
+       plt.close('all')
+       d2plot = concat_df[concat_df['task']== currTask]
+       
+       g = sns.FacetGrid(d2plot, col="TYPE",  row="SubjectID")
+       g.map(sns.lineplot, 'LV','propTrials','block',palette='Set2')
+       g.map_dataframe(sns.lineplot, x ='LV',y=0.5, color='gray',linestyle='dotted')
+       g.map_dataframe(sns.scatterplot, x='LV', y='propTrials', marker='o', hue='block',palette='Set2')
+       g.map(sns.lineplot, 'LV','propTrials',color='black', ci = None)
+       #g.map_dataframe(sns.scatterplot, x='LV', y='propTrials', marker='o', color='black')
+       g.add_legend()
+       g.fig.suptitle(currTask, fontsize=20, y=1.0, x= 0.08)
+   
+       # save     
+       g.savefig('FIG_' + currTask + '_stats_Acc.jpg')
+   # %% 
+   os.chdir(dirinput)
+   for currTask in concat_df.task.unique():
+       concat_df = concat_df[concat_df['Accuracy']=='1']
+       #%
+       plt.close('all')
+       d2plot = concat_df[concat_df['task']== currTask]
+       
+       g = sns.FacetGrid(d2plot, col="TYPE",  row="SubjectID")
+       g.map(sns.lineplot, 'LV','RT_mean','block',palette='Set2')
+       g.map_dataframe(sns.lineplot, x ='LV',y=0.5, color='gray',linestyle='dotted')
+       g.map_dataframe(sns.scatterplot, x='LV', y='RT_mean', marker='o', hue='block',palette='Set2')
+       g.map(sns.lineplot, 'LV','RT_mean',color='black', ci = None)
+       g.add_legend()
+       g.fig.suptitle(currTask, fontsize=20, y=1.0, x= 0.08)
+   
+       # save     
+       g.savefig('FIG_' + currTask + '_stats_RT.jpg')
 
